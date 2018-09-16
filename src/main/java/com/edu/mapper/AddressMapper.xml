@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edu.mapper.AddressMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.pojo.Address" >
+    <id column="aid" property="aid" jdbcType="INTEGER" />
+    <result column="aname" property="aname" jdbcType="VARCHAR" />
+    <result column="aphone" property="aphone" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="cityid" property="cityid" jdbcType="INTEGER" />
+    <result column="countryid" property="countryid" jdbcType="INTEGER" />
+    <result column="aord" property="aord" jdbcType="INTEGER" />
+    <result column="acreatetime" property="acreatetime" jdbcType="DATE" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.edu.pojo.Address" extends="BaseResultMap" >
+    <result column="adetail" property="adetail" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    aid, aname, aphone, pid, cityid, countryid, aord, acreatetime
+  </sql>
+  <sql id="Blob_Column_List" >
+    adetail
+  </sql>
+  <select id="selectByAid" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from address
+    where aid = #{aid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByAid" parameterType="java.lang.Integer" >
+    delete from address
+    where aid = #{aid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.edu.pojo.Address" >
+    insert into address ( aname, aphone,
+      pid, cityid, countryid, 
+      aord, acreatetime, adetail, uid
+      )
+    values (#{aname,jdbcType=VARCHAR}, #{aphone,jdbcType=VARCHAR},
+      #{pid,jdbcType=INTEGER}, #{cityid,jdbcType=INTEGER}, #{countryid,jdbcType=INTEGER}, 
+      #{aord,jdbcType=INTEGER}, #{acreatetime,jdbcType=DATE}, #{adetail,jdbcType=LONGVARCHAR},#{uid}
+      )
+  </insert>
+
+
+  <update id="updateByAid" parameterType="com.edu.pojo.Address" >
+    update address
+    set aname = #{aname,jdbcType=VARCHAR},
+      aphone = #{aphone,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=INTEGER},
+      cityid = #{cityid,jdbcType=INTEGER},
+      countryid = #{countryid,jdbcType=INTEGER},
+      aord = #{aord,jdbcType=INTEGER},
+      acreatetime = #{acreatetime,jdbcType=DATE}
+    where aid = #{aid,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAll" resultType="com.edu.pojo.Address" parameterType="java.lang.Integer">
+    select a.*, p.name pname, c.name cityname,co.name countryname from address a left join province p on a.pid = p.id
+    left join city c on a.cityid= c.id
+    left join country co on a.countryid = co.id
+    where a.uid = #{uid} order by  a.aord desc
+  </select>
+
+  <update id="updateDefault" parameterType="java.lang.Integer">
+    UPDATE address SET aord= CASE WHEN uid=#{uid} THEN 0 ELSE aord END,aord=CASE WHEN aid=#{aid} THEN 1  ELSE aord END
+  </update>
+</mapper>

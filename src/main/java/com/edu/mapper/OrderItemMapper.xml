@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edu.mapper.OrderItemMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.pojo.OrderItem" >
+    <id column="oiid" property="oiid" jdbcType="INTEGER" />
+    <result column="oid" property="oid" jdbcType="INTEGER" />
+    <result column="gid" property="gid" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="INTEGER" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="createtime" property="createtime" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    oiid, oid, gid, money, count, createtime
+  </sql>
+  <select id="selectByOiid" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from orderitem
+    where oiid = #{oiid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByOid" resultType="com.edu.pojo.OrderItem" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from orderitem
+    where oid = #{oid}
+  </select>
+
+  <insert id="insert" parameterType="com.edu.pojo.OrderItem" >
+    insert into orderitem (oiid, oid, gid, 
+      money, count, createtime
+      )
+    values (#{oiid,jdbcType=INTEGER}, #{oid,jdbcType=INTEGER}, #{gid,jdbcType=INTEGER}, 
+      #{money,jdbcType=INTEGER}, #{count,jdbcType=INTEGER}, #{createtime,jdbcType=DATE}
+      )
+  </insert>
+</mapper>

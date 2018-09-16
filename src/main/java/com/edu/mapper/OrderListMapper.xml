@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edu.mapper.OrderListMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.pojo.OrderList" >
+  <association property="order" javaType="com.edu.pojo.OrderList">
+    <id column="oid" property="oid" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="aid" property="aid" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="INTEGER" />
+    <result column="flag" property="flag" jdbcType="INTEGER" />
+    <result column="createtime" property="createtime" jdbcType="DATE" />
+  </association>
+  </resultMap>
+
+  <resultMap id="BaseResultMap2" type="com.edu.vo.OrderVo" >
+    <association property="order" javaType="com.edu.pojo.OrderList">
+      <id column="oid" property="oid" jdbcType="INTEGER" />
+      <result column="uid" property="uid" jdbcType="INTEGER" />
+      <result column="aid" property="aid" jdbcType="INTEGER" />
+      <result column="money" property="money" jdbcType="INTEGER" />
+      <result column="flag" property="flag" jdbcType="INTEGER" />
+      <result column="createtime" property="createtime" jdbcType="DATE" />
+    </association>
+    <association property="address" javaType="com.edu.pojo.Address">
+      <id column="aid" property="aid" javaType="INTEGER" />
+      <result column="aname" property="aname" />
+      <result column="aphone" property="aphone" />
+      <result column="pname" property="pname" />
+      <result column="cityname" property="cityname" />
+      <result column="countryname" property="countryname" />
+      <result column="adetail" property="adetail" />
+    </association>
+
+    <collection property="orderItems" ofType="com.edu.pojo.OrderItem">
+      <id column="oiid" property="oiid" jdbcType="INTEGER" />
+      <result column="money" property="money" />
+      <result column="count" property="count" />
+      <result column="createtime" property="createtime" />
+      <association property="goods" javaType="com.edu.pojo.Goods">
+        <id column="gid" property="gid" jdbcType="INTEGER"/>
+        <result column="gname" property="gname" />
+        <result column="gprice" property="gprice" />
+        <result column="gflag" property="gflag" />
+        <result column="gpic" property="gpic" />
+        <result column="gpubdate" property="gpubdate" />
+        <result column="gstar" property="gstar" />
+      </association>
+    </collection>
+
+  </resultMap>
+  <sql id="Base_Column_List" >
+    oid, uid, aid, money, flag, createtime
+  </sql>
+  <select id="selectByUid" resultType="com.edu.pojo.OrderList" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from orderlist
+    where uid = #{uid,jdbcType=INTEGER}
+  </select>
+  <select id="selectByOid" resultMap="BaseResultMap2" parameterType="java.lang.Integer">
+    SELECT o.*, a.aname, a.aphone, p.name pname, city.name cityname, country.name countryname,oi.count,
+    oi.money,oi.oiid,g.gname,g.gprice, g.gflag, g.gpic, g.gstar, g.gpubdate, g.gid
+    FROM orderlist o
+    LEFT JOIN address a ON o.aid = a.aid
+    LEFT JOIN province p ON a.pid = p.id
+    LEFT JOIN city ON a.cityid = city.id
+    LEFT JOIN country ON country.id = a.countryid
+    LEFT JOIN orderitem oi ON oi.oid = o.oid
+    LEFT JOIN goods g ON oi.gid = g.gid
+    WHERE o.oid = #{oid}
+  </select>
+
+  <insert id="insert" parameterType="com.edu.pojo.OrderList" >
+    insert into orderlist (oid, uid, aid, 
+      money, flag, createtime
+      )
+    values (#{oid,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, #{aid,jdbcType=INTEGER}, 
+      #{money,jdbcType=INTEGER}, #{flag,jdbcType=INTEGER}, #{createtime,jdbcType=DATE}
+      )
+  </insert>
+
+  <update id="updateFlag" parameterType="java.lang.Integer">
+    update orderlist set flag = #{flag} and oid = #{oid}
+  </update>
+
+
+</mapper>

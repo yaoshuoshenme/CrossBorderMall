@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edu.mapper.CountryMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.pojo.Country" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="no" property="no" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="weatherCode" property="weathercode" jdbcType="VARCHAR" />
+    <result column="cityid" property="cityid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, no, name, weatherCode, cityid
+  </sql>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from country
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByCityId" resultType="com.edu.pojo.Country" parameterType="java.lang.Integer">
+    select * from country c where c.cityid=#{id}
+  </select>
+
+
+</mapper>

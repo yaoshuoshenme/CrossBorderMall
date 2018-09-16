@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edu.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.pojo.User" >
+    <id column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="uname" property="uname" jdbcType="VARCHAR" />
+    <result column="upassword" property="upassword" jdbcType="VARCHAR" />
+    <result column="usex" property="usex" jdbcType="CHAR" />
+    <result column="umail" property="umail" jdbcType="VARCHAR" />
+    <result column="uactivation" property="uactivation" jdbcType="VARCHAR" />
+    <result column="uflag" property="uflag" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uid, uname, upassword, usex, umail, uactivation, uflag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where uid = #{uid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user
+    where uid = #{uid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.edu.pojo.User" useGeneratedKeys="true" keyProperty="uid">
+
+    <!--<selectKey resultType="java.lang.Integer" keyProperty="uid" order="AFTER">-->
+      <!--SELECT LAST_INSERT_ID() AS ID-->
+    <!--</selectKey>-->
+    insert into user ( uname, upassword,
+      usex, umail)
+    values ( #{uname}, #{upassword},
+      #{usex}, #{umail})
+  </insert>
+
+    <select id="selectByName"  resultType="com.edu.pojo.User">
+        select *from user u where u.uname = #{uname}
+    </select>
+    <select id="selectPasswordByName" resultType="String" parameterType="String">
+        select u.upassword from user where u.uname = #{uname}
+    </select>
+
+    <select id="selectByMail"  resultType="com.edu.pojo.User">
+        select *from user u where u.umail = #{umail}
+    </select>
+    <update id="updateByPrimaryKey" parameterType="com.edu.pojo.User">
+        update user u set u.upassword=#{upassword},u.usex=#{usex},u.uflag=#{uflag}
+        where u.uname=#{uname}
+    </update>
+
+
+</mapper>

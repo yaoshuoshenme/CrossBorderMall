@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--功能实现
+        1.扫描注解
+        2.事务管理器
+        3.事务处理方式
+        4.aop配置声明式事务
+    -->
+
+    <!--扫描注解-->
+    <context:component-scan base-package="com.edu.service.impl"/>
+
+    <!--事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <!--事务处理方式-->
+    <tx:advice transaction-manager="transactionManager" id="interceptor">
+
+        <!--propagation事务的传播行为，isolation事务的隔离级别-->
+        <tx:attributes>
+            <tx:method name="*" isolation="DEFAULT" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--aop声明式事务-->
+    <aop:config proxy-target-class="true" >
+        <aop:pointcut id="pt" expression="execution(* com.edu.service.impl.*.*(..))" />
+        <aop:advisor advice-ref="interceptor" pointcut-ref="pt" />
+    </aop:config>
+</beans>

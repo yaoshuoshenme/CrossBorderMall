@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edu.mapper.CartitemMapper" >
+  <resultMap id="BaseResultMap" type="com.edu.pojo.Cartitem" >
+    <id column="ciid" property="ciid" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="gid" property="gid" jdbcType="INTEGER" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="createtime" property="createtime" jdbcType="DATE" />
+  </resultMap>
+
+  <resultMap id="Basemap2" type="com.edu.pojo.Cartitem">
+    <id column="ciid" property="ciid" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="gid" property="gid" jdbcType="INTEGER" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="createtime" property="createtime" jdbcType="DATE" />
+    <association property="goods" javaType="com.edu.pojo.Goods">
+      <id column="gid" property="gid" jdbcType="INTEGER" />
+      <result column="gname" property="gname" />
+      <result column="gprice" property="gprice" />
+      <result column="gpic" property="gpic" />
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ciid, cid, gid, count, createtime
+  </sql>
+  <select id="selectByCiid" resultType="com.edu.pojo.Cartitem" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from cartitem
+    where ciid = #{ciid,jdbcType=INTEGER}
+  </select>
+
+    <select id="selectByCid" resultMap="Basemap2" parameterType="java.lang.Integer" >
+        select c.*, g.gname,g.gprice, g.gpic
+        from cartitem c left join goods g on c.gid = g.gid
+        where c.cid = #{cid}
+    </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from cartitem
+    where ciid = #{ciid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByCid" parameterType="java.lang.Integer">
+    delete from cartitem
+    where cid = #{cid}
+  </delete>
+  <insert id="insert" parameterType="com.edu.pojo.Cartitem" >
+    insert into cartitem (ciid, cid, gid, 
+      count, createtime)
+    values (#{ciid,jdbcType=INTEGER}, #{cid,jdbcType=INTEGER}, #{gid,jdbcType=INTEGER}, 
+      #{count,jdbcType=INTEGER}, now())
+  </insert>
+
+
+  <update id="updateByCiid" parameterType="java.lang.Integer" >
+    update cartitem
+    set count = count + #{count}
+    where ciid = #{ciid,jdbcType=INTEGER}
+  </update>
+    <select id="selectByGidAndCid" parameterType="java.lang.Integer" resultType="com.edu.pojo.Cartitem">
+        select *from cartitem where gid = #{gid} and cid=#{cid}
+    </select>
+
+  <select id="selectByCiids" resultMap="Basemap2" statementType="STATEMENT">
+   select c.*, g.gname,g.gprice, g.gpic
+        from cartitem c left join goods g on c.gid = g.gid
+        where c.ciid in (${ciids})
+  </select>
+
+  <delete id="deleteByCiids" parameterType="java.lang.String" statementType="STATEMENT">
+    delete from cartitem where ciid in (${ciids})
+  </delete>
+</mapper>
